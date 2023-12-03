@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  iris:
+    #image: containers.intersystems.com/intersystems/irishealth-community:latest-cd
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: ["9095:52773"]
+    container_name: iriscontainer1
+    volumes: ["./data:/data","./src:/src"]
+    environment: 
+      - TZ=JST-9
+
+  webgateway:
+    image: containers.intersystems.com/intersystems/webgateway:latest-cd
+    container_name: WG
+    init: true
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+    - ISC_CSP_CONF_FILE=/webgateway-shared/CSP.conf
+    - ISC_CSP_INI_FILE=/webgateway-shared/CSP.ini
+    #- ISC_DATA_DIRECTORY=/webgateway-shared
+    volumes:
+    - ./wgconfig:/webgateway-shared
